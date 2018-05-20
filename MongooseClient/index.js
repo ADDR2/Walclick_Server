@@ -31,11 +31,30 @@ class MongooseClient {
     }
 
     clientClooking({ username, lat, long, alt }){
-
+        return new Promise((resolve, reject) => {
+            const activeDate = Date.now();
+            this.models.Client.findOneAndUpdate(
+                { username },
+                { $set: { lat, long, alt, activeDate:activeDate, deactivationDate:null} },{new: true},
+                (err, doc) => {
+                    if (err) reject(err);
+                    else resolve(doc);
+                }
+            );
+        });
     }
 
     coords({ username, lat, long, alt }){
-
+        return new Promise((resolve, reject) => {
+            this.models.Client.findOneAndUpdate(
+                { username },
+                { $set: { lat, long, alt } }, {new: true},
+                (err, doc) => {
+                    if (err) reject(err);
+                    else resolve(doc);
+                }
+            );
+        });
     }
 }
 
