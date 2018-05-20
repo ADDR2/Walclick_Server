@@ -1,7 +1,7 @@
 const validator = require('validator');
 
 module.exports = () => [
-    'Client',
+    'Photographer',
     {
         username: {
             type: String,
@@ -30,6 +30,15 @@ module.exports = () => [
             min: 18,
             max: 150
         },
+        homePhone: {
+            type: String,
+            default: '12345'
+        },
+        cellPhone: {
+            type: String,
+            default: '12345'
+        },
+        profile: Object,
         activeDate: Date,
         deactivationDate: Date,
         working: Boolean,

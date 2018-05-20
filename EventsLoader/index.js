@@ -1,8 +1,8 @@
 const createClientEvents = require('../ClientEvents');
-const createPhotograferEvents = require('../PhotograferEvents');
+const createPhotographerEvents = require('../PhotographerEvents');
 
 module.exports = (socket, mongooseConnection) => {
-    const removeListeners = () => socket.removeAllListeners('Photografer') && socket.removeAllListeners('Client');
+    const removeListeners = () => socket.removeAllListeners('Photographer') && socket.removeAllListeners('Client');
 
     socket.on(
         'Client',
@@ -10,7 +10,7 @@ module.exports = (socket, mongooseConnection) => {
     );
     
     socket.on(
-        'Photografer',
-        () => removeListeners() && createPhotograferEvents(socket, mongooseConnection)
+        'Photographer',
+        () => removeListeners() && createPhotographerEvents(socket, mongooseConnection)
     );
 };

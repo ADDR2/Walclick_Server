@@ -1,8 +1,6 @@
 module.exports = (socket, mongooseConnection) => {
     const possibleActions = [
-        'createClient',
-        'clientClooking',
-        'coords'
+        'createPhotographer'
     ];
 
     possibleActions.forEach( action => {

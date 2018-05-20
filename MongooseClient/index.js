@@ -25,7 +25,16 @@ class MongooseClient {
         return newClient.save();
     }
 
-    showClient(id){
+    createPhotographer(photographerData){
+        const newPhotographer = new this.models.Photographer(photographerData);
+        return newPhotographer.save();
+    }
+
+    clientClooking({ username, lat, long, alt }){
+
+    }
+
+    coords({ username, lat, long, alt }){
 
     }
 }
