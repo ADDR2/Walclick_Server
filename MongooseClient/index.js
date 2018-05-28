@@ -30,7 +30,7 @@ class MongooseClient {
         return newPhotographer.save();
     }
 
-    clientClooking({ username, lat, long, alt }){
+    clientLooking({ username, lat, long, alt, socketId }){
         return new Promise((resolve, reject) => {
             const activeDate = Date.now();
             this.models.Client.findOneAndUpdate(
@@ -38,6 +38,7 @@ class MongooseClient {
                 { $set: { lat, long, alt, activeDate:activeDate, deactivationDate:null} },{new: true},
                 (err, doc) => {
                     if (err) reject(err);
+                    else if(!doc) reject(new Error('User not found'));
                     else resolve(doc);
                 }
             );

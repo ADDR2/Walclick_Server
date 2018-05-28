@@ -4,10 +4,10 @@ module.exports = (socket, mongooseConnection) => {
     ];
 
     possibleActions.forEach( action => {
-        socket.on(action, data => {
+        socket.on(action, (data, ack) => {
             mongooseConnection[action](data)
-            .then( result => socket.emit('response', result))
-            .catch( error => socket.emit('actionError', error.message));
+            .then( ack )
+            .catch( error => ack(undefined, error.message) );
         });
     });
 };
