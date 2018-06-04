@@ -12,7 +12,7 @@ const createCustomEvents = require('./EventsLoader');
 const MongooseClient = require('./MongooseClient');
 const models = require('./Models');
 const mongooseConnection = new MongooseClient({
-    domain: '',
+    domain: 'mongodb://dba:gp022018@ds113630.mlab.com:13630/walclick',
     models
 });
 

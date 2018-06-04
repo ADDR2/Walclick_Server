@@ -1,4 +1,4 @@
-module.exports = (socket, mongooseConnection) => {
+module.exports = (socket, mongooseConnection, { PermanentPhotographer }) => {
     const possibleActions = [
         'createClient',
         'clientLooking',
