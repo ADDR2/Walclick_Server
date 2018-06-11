@@ -20,22 +20,23 @@ class MongooseClient {
         });
     }
 
-    createClient(clientData){
+    createClient(clientData) {
         const newClient = new this.models.Client(clientData);
         return newClient.save();
     }
 
-    createPhotographer(photographerData){
+    createPhotographer(photographerData) {
         const newPhotographer = new this.models.Photographer(photographerData);
         return newPhotographer.save();
     }
 
-    clientLooking({ username, lat, long, alt, socketId }){
+    clientLooking({ username, lat, long, alt, socketId }) {
         return new Promise((resolve, reject) => {
             const activeDate = Date.now();
             this.models.Client.findOneAndUpdate(
                 { username },
-                { $set: { lat, long, alt, activeDate:activeDate, deactivationDate:null} },{new: true},
+                { $set: { lat, long, alt, activeDate, deactivationDate: null, socketId } },
+                { new: true },
                 (err, doc) => {
                     if (err) reject(err);
                     else if(!doc) reject(new Error('User not found'));
@@ -45,7 +46,37 @@ class MongooseClient {
         });
     }
 
-    coords({ username, lat, long, alt }){
+    photographerLooking({ username, lat, long, alt, socketId }) {
+        return new Promise((resolve, reject) => {
+            const activeDate = Date.now();
+            this.models.Photographer.findOneAndUpdate(
+                { username },
+                { $set: { lat, long, alt, activeDate, deactivationDate: null, socketId } },
+                { new: true },
+                (err, doc) => {
+                    if (err) reject(err);
+                    else if(!doc) reject(new Error('Photographer not found'));
+                    else resolve(doc);
+                }
+            );
+        });
+    }
+
+    findPhotographersActive() {
+        return new Promise((resolve, reject) => {
+            this.models.Photographer.find(
+                { activeDate: { $ne: null } },
+                (err, doc) => {
+                    if (err) reject(err);
+                    else if(!doc) reject(new Error('No photographers found'));
+                    else resolve(doc);
+                }
+            )
+            .select('username firstName age cellPhone profile lat long alt socketId');
+        });
+    }
+
+    coords({ username, lat, long, alt }) {
         return new Promise((resolve, reject) => {
             this.models.Client.findOneAndUpdate(
                 { username },
