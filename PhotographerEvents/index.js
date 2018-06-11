@@ -6,7 +6,7 @@ module.exports = (socket, mongooseConnection, { PermanentClient }) => {
 
     possibleActions.forEach( action => {
         socket.on(action, (data, ack) => {
-            mongooseConnection[action](data)
+            mongooseConnection[action](data, 'Photographer')
             .then( ack )
             .catch( error => ack(undefined, error.message) );
         });
