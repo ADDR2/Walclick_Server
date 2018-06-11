@@ -7,16 +7,16 @@ class MongooseClient {
             mongoose.connection.once('open', () => console.log(`Connected to DB: ${domain}`));
 
             mongoose.connect(domain)
-            .then(() => {
-                this.models = {};
+                .then(() => {
+                    this.models = {};
 
-                Object.values(models).forEach( modelGenerator => {
-                    const [ name, schema ] = modelGenerator();
-                    this.models[name] = mongoose.model(name, new mongoose.Schema(schema));
-                });
-                resolve();
-            })
-            .catch(reject);
+                    Object.values(models).forEach(modelGenerator => {
+                        const [name, schema] = modelGenerator();
+                        this.models[name] = mongoose.model(name, new mongoose.Schema(schema));
+                    });
+                    resolve();
+                })
+                .catch(reject);
         });
     }
 
@@ -39,7 +39,7 @@ class MongooseClient {
                 { new: true },
                 (err, doc) => {
                     if (err) reject(err);
-                    else if(!doc) reject(new Error('User not found'));
+                    else if (!doc) reject(new Error('User not found'));
                     else resolve(doc);
                 }
             );
@@ -55,32 +55,39 @@ class MongooseClient {
                 { new: true },
                 (err, doc) => {
                     if (err) reject(err);
-                    else if(!doc) reject(new Error('Photographer not found'));
+                    else if (!doc) reject(new Error('Photographer not found'));
                     else resolve(doc);
                 }
             );
         });
     }
 
-    findPhotographersActive() {
+    findPhotographersActive(clientLong, clientLat) {
+        console.log(clientLong, clientLat);
         return new Promise((resolve, reject) => {
-            this.models.Photographer.find(
-                { activeDate: { $ne: null } },
-                (err, doc) => {
-                    if (err) reject(err);
-                    else if(!doc) reject(new Error('No photographers found'));
-                    else resolve(doc);
-                }
-            )
-            .select('username firstName age cellPhone profile lat long alt socketId');
+            const METERS_PER_MILE = 1609.34
+            this.models.Photographer.find({
+                location: {
+                    $nearSphere: {
+                        $geometry: {
+                            type: "Point", coordinates: [clientLong, clientLat]
+                        },
+                        $maxDistance: 5 * METERS_PER_MILE
+                    }
+                }, activeDate: { $ne: null }, working: false
+            }, (err, doc) => {
+                if (err) reject(err);
+                else if (!doc || (Array.isArray(doc) && !doc.length)) reject(new Error('No photographers found'));
+                else resolve(doc);
+            }).select('username firstName age cellPhone profile lat long alt socketId');
         });
     }
 
-    coords({ username, lat, long, alt }) {
+    coords({ username, lat, long, alt }, model) {
         return new Promise((resolve, reject) => {
-            this.models.Client.findOneAndUpdate(
+            this.models[model].findOneAndUpdate(
                 { username },
-                { $set: { lat, long, alt } }, {new: true},
+                { $set: { "location.coordinates": [lat, long, alt] } }, { new: true },
                 (err, doc) => {
                     if (err) reject(err);
                     else resolve(doc);
@@ -90,4 +97,4 @@ class MongooseClient {
     }
 }
 
-module.exports =  MongooseClient;
+module.exports = MongooseClient;

@@ -42,9 +42,15 @@ module.exports = () => [
         activeDate: Date,
         deactivationDate: Date,
         working: Boolean,
-        lat: Number,
-        long: Number,
-        alt: Number,
+        location: {
+            type: {
+                type: String,
+                default: "Point"
+            },
+            coordinates: {
+                type: Array
+            }
+        },
         socketId: String
     }
 ];
