@@ -44,6 +44,7 @@ module.exports = () => [
         working: Boolean,
         lat: Number,
         long: Number,
-        alt: Number
+        alt: Number,
+        socketId: String
     }
 ];
